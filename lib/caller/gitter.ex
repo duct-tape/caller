@@ -26,10 +26,10 @@ defmodule Caller.Gitter do
       post( 
         "https://gitter.im/login/oauth/token",
         [body: Poison.encode!(%{
-                client_id: Keyword.fetch!(Application.get_env(:caller, Gitter), :client_id),
-                client_secret: Keyword.fetch!(Application.get_env(:caller, Gitter), :secret),
+                client_id: Application.fetch_env!(:caller, :client_id),
+                client_secret: Application.fetch_env!(:caller, :secret),
                 code: code,
-                redirect_uri: "https://devbot.itdude.eu",
+                redirect_uri: Application.fetch_env!(:caller, :redirect_uri),
                 grant_type: "authorization_code"
                               })]).body, "access_token")
   end

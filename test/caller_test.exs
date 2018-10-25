@@ -14,11 +14,28 @@ defmodule CallerTest do
     assert Map.get(Caller.Gitter.get_room_by_name("VentureGroup/ThatTestRoom").body, "id") == "5bd195c3d73408ce4facb1ec"
   end
 
-  test "sends room message" do
-    assert Caller.Gitter.room_message("5bd195c3d73408ce4facb1ec", "New test").status_code == 200
-  end
+  # test "sends room message" do
+  #   assert Caller.Gitter.room_message("5bd195c3d73408ce4facb1ec", "New test").status_code == 200
+  # end
 
   test "get room messages" do
-    assert Caller.Gitter.get_messages("5bd195c3d73408ce4facb1ec", "caller") == ["/caller make standy great again"]
+    assert List.last(Caller.Gitter.get_messages("5bd195c3d73408ce4facb1ec", "caller")) == "/caller make standy great again"
+  end
+
+  test "read and reply" do
+    message = List.first(Caller.Gitter.get_messages("5bd195c3d73408ce4facb1ec", "caller+say"))
+
+    assert message != nil
+
+    number = Regex.named_captures(~r/say (?<number>\d+)/, message)
+    |> Map.get("number")
+
+    message = if number == "30" do
+      "Meh."
+    else
+      "It's " <> number <> " dumbass!"
+    end
+
+    Caller.Gitter.room_message("5bd195c3d73408ce4facb1ec", message)
   end
 end
